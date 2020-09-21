@@ -1,3 +1,6 @@
+/* Adapted by halloleo (http://halloleo.net)
+   from CodeNerve (https://github.com/CodeNerve/CodeNerve.github.io) */
+
 var Typer = {
   text: '',
   accessCountimer: null,
@@ -6,11 +9,12 @@ var Typer = {
   file: '',
   accessCount: 0,
   deniedCount: 0,
-  init: function () {
+  
+  init: function (content_file) {
     accessCountimer = setInterval(function () {
       Typer.updLstChr();
     }, 500);
-    $.get(Typer.file, function (data) {
+    $.get(content_file, function (data) {
       Typer.text = data;
       Typer.text = Typer.text.slice(0, Typer.text.length - 1);
     });
@@ -95,9 +99,32 @@ function replaceUrls(text) {
   }
 }
 
-Typer.speed = 3;
-Typer.file = 'CodeNerve.txt';
-Typer.init();
+var small_width_match = "(max-width: 600px)"
+var medium_width_match = "(max-width: 1000px)"
+
+function matchFunc(matchmedium) {
+  var condiv = document.getElementById('console')
+  if (matchmedium.matches) {
+    if (window.matchMedia(small_width_match).matches) {
+      Typer.init('tilde_small.txt');
+      condiv.style.fontSize = "16px";
+      condiv.style.width = "400px";
+      //document.body.style.background = "darkblue";
+    } else {
+      Typer.init('tilde_medium.txt');
+      condiv.style.fontSize = "15px";
+      condiv.style.width = "550px";
+      //document.body.style.background = "darkgrey";
+    }
+  } else {
+    Typer.init('tilde_large.txt');
+  }
+}
+
+var matchmedium = window.matchMedia(medium_width_match)
+matchFunc(matchmedium) // Call listener function at run time
+matchmedium.addListener(matchFunc) // Attach listener function on state changes
+
 
 var timer = setInterval('t();', 30);
 function t() {
